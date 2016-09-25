@@ -1,7 +1,7 @@
 # ElectionPrediction
 http://event.cwi.nl/lsde/2016/practical2_projects.shtml#W2
 
-## How to run the downloader:
+## How to run the downloader locally:
 
 ```
 $ mvn package
