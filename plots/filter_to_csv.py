@@ -16,6 +16,7 @@ def process_files(data_dir, file_list):
     wiki_topics = defaultdict(list)
     start_time = file_list[0]
     for file_name in file_list:
+        print >> sys.stderr, file_name
         path = os.path.join(data_dir, 'pageviews-' + file_name.strftime('%Y%m%d-%H%M%S'))
         with open(path) as f:
             lines = f.readlines()
@@ -28,6 +29,8 @@ def process_files(data_dir, file_list):
                         today[splits[1]] += int(splits[2])
                         break
             except Exception as e:
+                print >> sys.stderr, line
+                print >> sys.stderr, splits
                 print >> sys.stderr, type(e)
                 print >> sys.stderr, e
 
