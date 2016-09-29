@@ -34,12 +34,22 @@ def process_files(data_dir, file_list):
             wiki_topics[page].append((file_name, views))
 
 
-    matrix = [[0 for col in xrange(len(wiki_topics))] for row in xrange(len(file_list))]
+    top_topics = []
+    for k, v in wiki_topics.iteritems():
+        total_views = 0
+        for _, views in v:
+            total_views += views
+        top_topics.append((k, total_views))
+
+
+    top_topics = sorted(top_topics, key=lambda tup: tup[1], reverse=True)[:20]
+
+    matrix = [[0 for col in xrange(len(top_topics))] for row in xrange(len(file_list))]
     col = 0
     header = ['Date']
-    for k, v in wiki_topics.iteritems():
+    for k, _ in top_topics:
         header.append(k)
-        for time, views in v:
+        for time, views in wiki_topics[k]:
             row = (time - start_time).seconds / 3600
             matrix[row][col] = views
         col += 1
