@@ -46,7 +46,7 @@ def process_files(data_dir, file_list):
 
     print ' '.join(header)
     for row in xrange(len(matrix)):
-        date = 'Date({}) '.format(file_list[row].strftime('%Y,%m,%d,%H,%M,%S'))
+        date = 'Date({})'.format(file_list[row].strftime('%Y,%m,%d,%H,%M,%S'))
         print date, ' '.join(map(str, matrix[row]))
 
 def __main__():
