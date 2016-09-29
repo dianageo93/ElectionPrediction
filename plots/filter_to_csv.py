@@ -53,7 +53,7 @@ def process_files(data_dir, file_list):
     for k, _ in top_topics:
         header.append(k)
         for time, views in wiki_topics[k]:
-            row = (time - start_time).seconds / 3600
+            row = (time - start_time).total_seconds / 3600
             matrix[row][col] = views
         col += 1
 
