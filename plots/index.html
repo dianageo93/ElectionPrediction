@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="jquery.csv.js"></script>
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col s12">
+                    <input type="file" id="input">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <div id="chart" style="width: 1200px; height: 500px"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            google.charts.load('current', {'packages':['corechart']});
+
+            $("#input").change(function(e) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var csv = $.csv.toArrays(e.target.result, {separator: " "});
+
+                    var cols = [{id: "date", label: "Date", type: "date"}];
+                    for (var i = 1; i < csv[0].length; i++) {
+                        cols.push({id: csv[0][i], label: csv[0][i], type: "number"});
+                    }
+
+                    var rows = [];
+                    for (var i = 1; i < csv.length; i++) {
+                        var row = {c: []};
+                        for (var j = 0; j < csv[i].length; j++) {
+                            row.c.push({v: csv[i][j]});
+                        }
+                        rows.push(row);
+                    }
+
+                    var data = new google.visualization.DataTable({
+                        cols: cols,
+                        rows: rows
+                    });
+
+                    var options = {
+                        title: "Pageviews from Sept 14th to Sept 28th",
+                        chartArea: {left: 10,top: 20, width: "80%", height: "80%"},
+                        legend: { position: "bottom" }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('chart'));
+                    chart.draw(data, options);
+                };
+                reader.readAsText(e.target.files[0]);
+            });
+        </script>
+    </body>
+</html>
