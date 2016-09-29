@@ -27,12 +27,12 @@ def process_files(data_dir, file_list):
                     if key_word in splits[1].lower():
                         today[splits[1]] += int(splits[2])
                         break
-            except:
-                pass
+            except Exception as e:
+                print >> sys.stderr, type(e)
+                print >> sys.stderr, e
 
         for page, views in today.iteritems():
             wiki_topics[page].append((file_name, views))
-
 
     top_topics = []
     for k, v in wiki_topics.iteritems():
