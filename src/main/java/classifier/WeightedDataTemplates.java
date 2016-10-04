@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.lang.Math.abs;
-import static java.lang.Math.exp;
+import static java.lang.Math.*;
 
 /**
  * This is a rough Java translation of the python code available at:
@@ -23,6 +22,7 @@ public final class WeightedDataTemplates {
     private final double lambda;
     private final ReferenceTrends referenceTrends;
     private final List<Double> totalSeries = new ArrayList<>();
+    private double totalSeriesSum = 0;
     private double trendWeight;
     private double nonTrendWeight;
 
@@ -42,9 +42,10 @@ public final class WeightedDataTemplates {
     /** Calculate trend weights for time series based on latest data. */
     public void update(double count) {
         totalSeries.add(count);
+        totalSeriesSum += count;
 
         // Exit early until totalSeries is long enough.
-        if (totalSeries.size() < referenceLength || totalSeries.stream().mapToDouble(Double::doubleValue).sum() == 0) {
+        if (totalSeries.size() < referenceLength || totalSeriesSum == 0) {
             trendWeight = 0;
             nonTrendWeight = 0;
             return;
@@ -87,20 +88,14 @@ public final class WeightedDataTemplates {
      * Get the minimum distance between the series and all testSeries-length subset of reference_series.
      * Exponentiate it and return the weight. */
     private double getWeight(List<Double> referenceSeries, List<Double> testSeries) {
-        // Account for case when referenceSeries is used as the testSeries.
-        if (referenceSeries.equals(testSeries)) {
-            return 0;
-        }
-
         double minDistance = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < referenceSeries.size() - seriesLength; i++) {
-            List<Double> subSeries = referenceSeries.subList(i, seriesLength);
+        for (int i = 0; i <= referenceSeries.size() - seriesLength; i++) {
+            List<Double> subSeries = referenceSeries.subList(i, i + seriesLength);
             double d = euclideanDistance(subSeries, testSeries);
             if (d < minDistance) {
                 minDistance = d;
             }
         }
-
         return exp(-minDistance * lambda);
     }
 

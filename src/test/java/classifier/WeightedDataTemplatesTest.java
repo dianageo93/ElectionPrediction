@@ -28,7 +28,7 @@ public class WeightedDataTemplatesTest {
     private static final String BASELINE_OFFSET = "baselineOffset";
     private static final String N_SMOOTH = "nSmooth";
     private static final String ALPHA = "alpha";
-    private static final double EPSILON = 0.001;
+    private static final double EPSILON = 0.01;
     private static final double[] INPUT =
             new double[] {76, 91, 69, 76, 39, 36, 59, 58, 58, 66, 70, 34, 74, 180, 93, 47, 37, 26, 23, 67, 62, 270, 460,
                     160, 91, 130, 110, 110, 310, 220, 330, 170, 240, 160, 90, 250, 120, 190, 170, 140, 160, 110, 97,
@@ -96,7 +96,7 @@ public class WeightedDataTemplatesTest {
         assertEquals(results.size(), EXPECTED.length);
 
         for (int i = 0; i < results.size(); i++) {
-            assertEquals(results.get(i), EXPECTED[i], EPSILON);
+            assertEquals(EXPECTED[i], results.get(i), EPSILON);
         }
     }
 }

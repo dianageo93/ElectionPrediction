@@ -7,6 +7,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.Math.max;
+
 public class ReferenceTrends {
     public static final String TRENDS = "/trends.ser";
     public static final String NON_TRENDS = "/non_trends.ser";
@@ -76,9 +78,10 @@ public class ReferenceTrends {
      */
     public void unitNormalization(List<Double> series) {
         double sum = 0;
-        for (int i = series.size() - basefileOffset - referenceLength; i < series.size() - basefileOffset; i++) {
+        for (int i = max(series.size() - basefileOffset - referenceLength, 0); i < series.size() - basefileOffset; i++) {
             sum += series.get(i);
         }
+        sum /= referenceLength;
         if (sum == 0) {
             sum = EPSILON;
         }
@@ -103,7 +106,7 @@ public class ReferenceTrends {
             dq.addLast(series.get(i));
             dqSum += series.get(i);
             series.set(i, dqSum / dq.size());
-            while (dq.size() > nSmooth) {
+            if (dq.size() >= nSmooth) {
                 dqSum -= dq.removeFirst();
             }
         }
@@ -111,7 +114,7 @@ public class ReferenceTrends {
 
     public void logarithmicScaling(List<Double> series) {
         for (int i = 0; i < series.size(); i++) {
-            series.set(i, Math.log10(series.get(i) < 0 ? EPSILON : series.get(i)));
+            series.set(i, Math.log10(series.get(i) <= 0 ? EPSILON : series.get(i)));
         }
     }
 
