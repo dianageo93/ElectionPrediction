@@ -2,7 +2,6 @@ package classifier;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.abs;
@@ -19,32 +18,33 @@ import static java.lang.Math.exp;
 public final class WeightedDataTemplates {
     private static final double EPSILON = 0.001;
 
-    private final Integer seriesLength;
-    private final Integer referenceLength;
-    private final Double lambda;
+    private final int seriesLength;
+    private final int referenceLength;
+    private final double lambda;
     private final ReferenceTrends referenceTrends;
-    private final List<Integer> totalSeries = new ArrayList<>();
+    private final List<Double> totalSeries = new ArrayList<>();
     private double trendWeight;
     private double nonTrendWeight;
 
     public WeightedDataTemplates(
-            Optional<Integer> seriesLength,
-            Optional<Integer> referenceLength,
-            Optional<Double> lambda) {
-        this.seriesLength = seriesLength.isPresent() ? seriesLength.get() : 50;
-        this.referenceLength = referenceLength.isPresent() ? referenceLength.get() : 210;
-        this.lambda = lambda.isPresent() ? lambda.get() : 1d;
-        this.referenceTrends = new ReferenceTrends();
+            int seriesLength,
+            int referenceLength,
+            double lambda,
+            ReferenceTrends referenceTrends) {
+        this.seriesLength = seriesLength;
+        this.referenceLength = referenceLength;
+        this.lambda = lambda;
         this.trendWeight = -1;
         this.nonTrendWeight = -1;
+        this.referenceTrends = referenceTrends;
     }
 
     /** Calculate trend weights for time series based on latest data. */
-    public void update(int count, boolean checkForSelf) {
+    public void update(double count) {
         totalSeries.add(count);
 
         // Exit early until totalSeries is long enough.
-        if (totalSeries.size() < referenceLength || totalSeries.stream().mapToInt(Integer::intValue).sum() == 0) {
+        if (totalSeries.size() < referenceLength || totalSeries.stream().mapToDouble(Double::doubleValue).sum() == 0) {
             trendWeight = 0;
             nonTrendWeight = 0;
             return;
@@ -52,21 +52,20 @@ public final class WeightedDataTemplates {
 
         // Transform a reference-sized subseries.
         List<Double> transformedSeries = referenceTrends.transformInput(
-                totalSeries.subList(totalSeries.size() - referenceLength, totalSeries.size()), /* isTestSeries */ true,
-                seriesLength, referenceLength, lambda);
+                totalSeries.subList(totalSeries.size() - referenceLength, totalSeries.size()));
         // Get correctly sized test series.
         List<Double> testSeries =
                 transformedSeries.subList(transformedSeries.size() - seriesLength, transformedSeries.size());
 
         trendWeight = 0;
         for (List<Double> referenceSeries : referenceTrends.getTrends()) {
-            double weight = getWeight(referenceSeries, testSeries, checkForSelf);
+            double weight = getWeight(referenceSeries, testSeries);
             trendWeight += weight;
         }
 
         nonTrendWeight = 0;
         for (List<Double> nonReferenceSeries : referenceTrends.getNonTrends()) {
-            double weight = getWeight(nonReferenceSeries, testSeries, checkForSelf);
+            double weight = getWeight(nonReferenceSeries, testSeries);
             nonTrendWeight += weight;
         }
     }
@@ -87,9 +86,9 @@ public final class WeightedDataTemplates {
     /**
      * Get the minimum distance between the series and all testSeries-length subset of reference_series.
      * Exponentiate it and return the weight. */
-    private double getWeight(List<Double> referenceSeries, List<Double> testSeries, boolean checkForSelf) {
+    private double getWeight(List<Double> referenceSeries, List<Double> testSeries) {
         // Account for case when referenceSeries is used as the testSeries.
-        if (checkForSelf && referenceSeries.equals(testSeries)) {
+        if (referenceSeries.equals(testSeries)) {
             return 0;
         }
 

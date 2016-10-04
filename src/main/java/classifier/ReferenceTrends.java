@@ -1,10 +1,18 @@
 package classifier;
 
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ReferenceTrends {
-    private final List<List<Double>> trends = new ArrayList<>();
-    private final List<List<Double>> nonTrends = new ArrayList<>();
+    public static final String TRENDS = "/trends.ser";
+    public static final String NON_TRENDS = "/non_trends.ser";
+
+    private final List<List<Double>> trends;
+    private final List<List<Double>> nonTrends;
     private static final double EPSILON = 0.00001;
     private final int referenceLength;
     private final int basefileOffset;
@@ -12,39 +20,50 @@ public class ReferenceTrends {
     private final double alpha;
 
     public ReferenceTrends(
-            Optional<Integer> referenceLength,
-            Optional<Integer> baselineOffset,
-            Optional<Integer> nSmooth,
-            Optional<Double> alpha
-    ) {
-        this.referenceLength = referenceLength.isPresent() ? referenceLength.get() : 210;
-        this.basefileOffset = baselineOffset.isPresent() ? baselineOffset.get() : 40;
-        this.nSmooth = nSmooth.isPresent() ? nSmooth.get() : 80;
-        this.alpha = alpha.isPresent() ? alpha.get() : 1.2;
+            int referenceLength,
+            int baselineOffset,
+            int nSmooth,
+            double alpha) throws IOException, ClassNotFoundException {
+        this.referenceLength = referenceLength;
+        this.basefileOffset = baselineOffset;
+        this.nSmooth = nSmooth;
+        this.alpha = alpha;
+
+        this.trends = readSerializedData(TRENDS);
+        this.nonTrends = readSerializedData(NON_TRENDS);
+    }
+
+    public List<List<Double>> getTrends() {
+        return trends;
+    }
+
+    public List<List<Double>> getNonTrends() {
+        return nonTrends;
     }
 
     public void addReferenceTrend(List<Double> series, boolean trending) {
-        transformTrend(series);
-        sizing(series);
+        List<Double> transformedSeries = transformInput(series);
+        sizing(transformedSeries);
         if (trending) {
-            trends.add(series);
+            trends.add(transformedSeries);
         }
         else {
-            nonTrends.add(series);
+            nonTrends.add(transformedSeries);
         }
     }
 
-    public void transformTrend(List<Double> series) {
-        addOne(series);
-        unitNormalization(series);
-        logarithmicScaling(series);
-        smoothing(series);
+    public List<Double> transformInput(List<Double> series) {
+        List<Double> seriesCopy = new ArrayList(series);
+
+        addOne(seriesCopy);
+        unitNormalization(seriesCopy);
+        logarithmicScaling(seriesCopy);
+        smoothing(seriesCopy);
+
+        return seriesCopy;
     }
 
-    /**
-     * Add a count of 1 to every count in the series
-     * @param series
-     */
+    /** Add a count of 1 to every count in the series. */
     public void addOne(List<Double> series) {
         for (int i = 0; i < series.size(); i++) {
             series.set(i, series.get(i) + 1);
@@ -54,7 +73,6 @@ public class ReferenceTrends {
     /**
      * Do unit normalization based on "reference_length" number of bins at the
      * end of the series
-     * @param series
      */
     public void unitNormalization(List<Double> series) {
         double sum = 0;
@@ -101,5 +119,13 @@ public class ReferenceTrends {
         while (series.size() > referenceLength) {
             series.remove(0);
         }
+    }
+
+    private List<List<Double>> readSerializedData(String filename) throws IOException, ClassNotFoundException {
+        ObjectInputStream oos = new ObjectInputStream(getClass().getResourceAsStream(filename));
+        List<List<Double>> data = (List<List<Double>>) oos.readObject();
+        oos.close();
+
+        return data;
     }
 }
