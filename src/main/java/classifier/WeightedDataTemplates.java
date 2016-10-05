@@ -1,6 +1,6 @@
 package classifier;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -21,7 +21,7 @@ public final class WeightedDataTemplates {
     private final int referenceLength;
     private final double lambda;
     private final ReferenceTrends referenceTrends;
-    private final List<Double> totalSeries = new ArrayList<>();
+    private final List<Double> totalSeries = new LinkedList<>();
     private double totalSeriesSum = 0;
     private double trendWeight;
     private double nonTrendWeight;
@@ -43,6 +43,9 @@ public final class WeightedDataTemplates {
     public void update(double count) {
         totalSeries.add(count);
         totalSeriesSum += count;
+        while (totalSeries.size() > max(referenceLength, seriesLength)) {
+            totalSeries.remove(0);
+        }
 
         // Exit early until totalSeries is long enough.
         if (totalSeries.size() < referenceLength || totalSeriesSum == 0) {
@@ -52,8 +55,7 @@ public final class WeightedDataTemplates {
         }
 
         // Transform a reference-sized subseries.
-        List<Double> transformedSeries = referenceTrends.transformInput(
-                totalSeries.subList(totalSeries.size() - referenceLength, totalSeries.size()));
+        List<Double> transformedSeries = referenceTrends.transformInput(totalSeries);
         // Get correctly sized test series.
         List<Double> testSeries =
                 transformedSeries.subList(transformedSeries.size() - seriesLength, transformedSeries.size());
