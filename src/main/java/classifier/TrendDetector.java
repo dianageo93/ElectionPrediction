@@ -1,6 +1,15 @@
 package classifier;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.InputSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaNewHadoopRDD;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
@@ -11,11 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.parseDouble;
@@ -30,11 +35,12 @@ public final class TrendDetector implements Serializable {
     private static final String BASELINE_OFFSET = "baselineOffset";
     private static final String N_SMOOTH = "nSmooth";
     private static final String ALPHA = "alpha";
-    private static final SimpleDateFormat PARSER = new SimpleDateFormat("YYYYMMdd-HHmmss");
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         String inputFilePattern = args[0];
         String outputFilePattern = args[1];
+
+
 
         InputStream inputStream = TrendDetector.class.getResourceAsStream(CONFIG_FILE_PATH);
         checkState(inputStream != null, "Could not find config file in class resources.");
@@ -49,8 +55,42 @@ public final class TrendDetector implements Serializable {
                         parseDouble(properties.getProperty(ALPHA)));
 
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("TrendDetector"));
-        sc
-                .wholeTextFiles(inputFilePattern)
+
+        JavaPairRDD<LongWritable, Text> javaPairRDD = sc.newAPIHadoopFile(
+                inputFilePattern,
+                TextInputFormat.class,
+                LongWritable.class,
+                Text.class,
+                new Configuration()
+        );
+        JavaNewHadoopRDD<LongWritable, Text> hadoopRDD = (JavaNewHadoopRDD) javaPairRDD;
+        JavaRDD<Tuple2<String, String>> namedLinesRDD = hadoopRDD.mapPartitionsWithInputSplit(
+                new Function2<InputSplit, Iterator<Tuple2<LongWritable, Text>>, Iterator<Tuple2<String, String>>>() {
+                    @Override
+                    public Iterator<Tuple2<String, String>> call(InputSplit inputSplit, final Iterator<Tuple2<LongWritable, Text>> lines) throws Exception {
+                        FileSplit fileSplit = (FileSplit) inputSplit;
+                        final String fileName = fileSplit.getPath().getName();
+                        return new Iterator<Tuple2<String, String>>() {
+                            @Override
+                            public boolean hasNext() {
+                                return lines.hasNext();
+                            }
+                            @Override
+                            public Tuple2<String, String> next() {
+                                Tuple2<LongWritable, Text> entry = lines.next();
+                                return new Tuple2<String, String>(fileName, entry._2().toString());
+                            }
+                            @Override
+                            public void remove() {
+
+                            }
+                        };
+                    }
+                },
+                true
+        );
+
+        namedLinesRDD
                 .flatMapToPair(new TopicToTimeseries())
                 .reduceByKey(new OrderTimeseriesByTimestamp())
                 .mapValues(new ComputeEta(properties, referenceTrends))
@@ -105,9 +145,12 @@ public final class TrendDetector implements Serializable {
 
             String fileName = input._1();
             String fileContent = input._2();
+            SimpleDateFormat parser = new SimpleDateFormat("YYYYMMdd-HHmmss");
+            System.err.println("MATZA = " + fileName);
+            int gzIndex = fileName.lastIndexOf(".gz");
 
-            Long timestamp = PARSER
-                    .parse(fileName.substring(fileName.length() - 18, fileName.length() - 3))
+            Long timestamp = parser
+                    .parse(fileName.substring(gzIndex - 15, gzIndex))
                     .getTime();
             List<String> lines = asList(fileContent.split("\\r?\\n"));
             Map<String, Tuple2<String, TreeMap<Long, Double>>> counts = new HashMap<>();
