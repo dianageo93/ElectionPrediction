@@ -1,5 +1,6 @@
 package classifier;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import static java.lang.Math.*;
  * Thesis: https://dspace.mit.edu/bitstream/handle/1721.1/85399/870304955-MIT.pdf?sequence=2
  * Blog post: https://snikolov.wordpress.com/2012/11/14/early-detection-of-twitter-trends/
  */
-public final class WeightedDataTemplates {
+public final class WeightedDataTemplates implements Serializable {
     private static final double EPSILON = 0.001;
 
     private final int seriesLength;
