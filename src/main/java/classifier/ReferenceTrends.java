@@ -2,6 +2,7 @@ package classifier;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -9,7 +10,7 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-public class ReferenceTrends {
+public class ReferenceTrends implements Serializable {
     public static final String TRENDS = "/trends.ser";
     public static final String NON_TRENDS = "/non_trends.ser";
 

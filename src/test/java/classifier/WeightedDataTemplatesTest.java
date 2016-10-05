@@ -6,6 +6,7 @@ import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
  * https://github.com/jeffakolb/Gnip-Trend-Detection/tree/92d71c3460db1482dc5bb0e640cea2d4d725e5ec/example
  */
 @RunWith(JUnit4.class)
-public class WeightedDataTemplatesTest {
+public class WeightedDataTemplatesTest implements Serializable {
     private static final String CONFIG_FILE = "/config.properties";
     private static final String SERIES_LENGTH = "seriesLength";
     private static final String REFERENCE_LENGTH = "referenceLength";
