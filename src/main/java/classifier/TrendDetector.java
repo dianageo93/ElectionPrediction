@@ -6,6 +6,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.spark.HashPartitioner;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaNewHadoopRDD;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -13,8 +14,9 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
+import scala.Tuple3;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,6 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
-import static java.util.Arrays.asList;
 
 public final class TrendDetector implements Serializable {
     private static final String CONFIG_FILE_PATH = "/config.properties";
@@ -91,8 +92,9 @@ public final class TrendDetector implements Serializable {
         );
 
         namedLinesRDD
-                .flatMapToPair(new TopicToTimeseries())
-                .reduceByKey(new OrderTimeseriesByTimestamp())
+                .mapToPair(new TopicToTimeseries())
+                .reduceByKey(new ReduceByTopic())
+                .partitionBy(new HashPartitioner(128))
                 .mapValues(new ComputeEta(properties, referenceTrends))
                 .saveAsTextFile(outputFilePattern);
 
@@ -100,7 +102,7 @@ public final class TrendDetector implements Serializable {
     }
 
     private static final class ComputeEta implements
-            Function<TreeMap<Long,Double>, TreeMap<Long, Tuple2<Double, Double>>> {
+            Function<List<Tuple2<Long,Double>>, List<Tuple3<Long, Double, Double>>> {
         private final WeightedDataTemplates dataTemplate;
 
         public ComputeEta(Properties properties, ReferenceTrends referenceTrends) {
@@ -113,67 +115,79 @@ public final class TrendDetector implements Serializable {
         }
 
         @Override
-        public TreeMap<Long, Tuple2<Double, Double>> call(TreeMap<Long, Double> input) throws Exception {
-            TreeMap<Long, Tuple2<Double, Double>> result = new TreeMap<>();
-            for (Map.Entry<Long, Double> it : input.entrySet()) {
-                dataTemplate.update(it.getValue());
-                result.put(it.getKey(), new Tuple2<>(it.getValue(), dataTemplate.getResult()));
+        public List<Tuple3<Long, Double, Double>> call(List<Tuple2<Long, Double>> input) throws Exception {
+            List<Tuple3<Long, Double, Double>> result = new ArrayList<>();
+            for (Tuple2<Long, Double> it : input) {
+                dataTemplate.update(it._2);
+                result.add(new Tuple3<>(it._1, it._2, dataTemplate.getResult()));
             }
 
             return result;
         }
     }
 
-    private static final class OrderTimeseriesByTimestamp implements
-            Function2<TreeMap<Long, Double>, TreeMap<Long, Double>, TreeMap<Long, Double>> {
+    private static final class ReduceByTopic implements
+            Function2<List<Tuple2<Long, Double>>, List<Tuple2<Long, Double>>, List<Tuple2<Long, Double>>> {
 
         @Override
-        public TreeMap<Long, Double> call(TreeMap<Long, Double> map1, TreeMap<Long, Double> map2) throws Exception {
-            TreeMap<Long, Double> result = new TreeMap<>();
-            result.putAll(map1);
-            result.putAll(map2);
+        public List<Tuple2<Long, Double>> call(List<Tuple2<Long, Double>> list1, List<Tuple2<Long, Double>> list2)
+                throws Exception {
+            int idx1 = 0;
+            int idx2 = 0;
+            List<Tuple2<Long, Double>> result = new ArrayList<>();
+            while (idx1 < list1.size() && idx2 < list2.size()) {
+                Tuple2<Long, Double> tup1 = list1.get(idx1);
+                Tuple2<Long, Double> tup2 = list2.get(idx2);
+                if (tup1._1.equals(tup2._1)) {
+                    result.add(new Tuple2(tup1._1, tup1._2 + tup2._2));
+                    idx1 += 1;
+                    idx2 += 1;
+                } else if (tup1._1.compareTo(tup1._1) < 0) {
+                    result.add(tup1);
+                    idx1 += 1;
+                } else {
+                    result.add(tup2);
+                    idx2 += 1;
+                }
+            }
+            while (idx1 < list1.size()) {
+                result.add(list1.get(idx1));
+                idx1 += 1;
+            }
+
+            while (idx2 < list2.size()) {
+                result.add(list2.get(idx1));
+                idx2 += 1;
+            }
             return result;
         }
     }
 
     private static final class TopicToTimeseries implements
-            PairFlatMapFunction<Tuple2<String,String>, String, TreeMap<Long, Double>> {
+            PairFunction<Tuple2<String,String>, String, List<Tuple2<Long, Double>>> {
 
         @Override
-        public Iterable<Tuple2<String, TreeMap<Long, Double>>> call(Tuple2<String, String> input)
-                throws Exception {
+        public Tuple2<String, List<Tuple2<Long, Double>>> call(Tuple2<String, String> input) throws Exception {
 
             String fileName = input._1();
-            String fileContent = input._2();
+            String line = input._2();
             SimpleDateFormat parser = new SimpleDateFormat("YYYYMMdd-HHmmss");
-            System.err.println("MATZA = " + fileName);
             int gzIndex = fileName.lastIndexOf(".gz");
 
             Long timestamp = parser
                     .parse(fileName.substring(gzIndex - 15, gzIndex))
                     .getTime();
-            List<String> lines = asList(fileContent.split("\\r?\\n"));
-            Map<String, Tuple2<String, TreeMap<Long, Double>>> counts = new HashMap<>();
-            for (String line : lines) {
-                try {
-                    String[] tokens = line.split(" ");
-                    if (tokens.length >= 3) {
-                        String topic = tokens[1];
-                        Double count = parseDouble(tokens[2]);
-                        if (counts.containsKey(topic)) {
-                            TreeMap<Long, Double> map = counts.get(topic)._2;
-                            map.put(timestamp, map.get(timestamp) + count);
-                        } else {
-                            TreeMap<Long, Double> map = new TreeMap<>();
-                            map.put(timestamp, count);
-                            counts.put(topic, new Tuple2<>(topic, map));
-                        }
-                    }
-                } catch (Exception e) {
-                }
-            }
 
-            return counts.values();
+            try {
+                String[] tokens = line.split(" ");
+                if (tokens.length >= 3) {
+                    String topic = tokens[1];
+                    Double count = parseDouble(tokens[2]);
+                    return new Tuple2<>(topic, Arrays.asList(new Tuple2<>(timestamp, count)));
+                }
+            } catch (Exception e) {}
+
+            return new Tuple2<>("", Arrays.asList(new Tuple2<>(0L, 0d)));
         }
     }
 }
