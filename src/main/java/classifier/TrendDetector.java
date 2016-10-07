@@ -18,7 +18,6 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 import scala.Tuple3;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -37,21 +36,15 @@ public final class TrendDetector implements Serializable {
     private static final String N_SMOOTH = "nSmooth";
     private static final String ALPHA = "alpha";
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws Exception {
         String inputFilePattern = args[0];
         String outputFilePattern = args[1];
+        final List<String> keyWords = new ArrayList<>(Arrays.asList(args).subList(2, args.length));
 
         InputStream inputStream = TrendDetector.class.getResourceAsStream(CONFIG_FILE_PATH);
         checkState(inputStream != null, "Could not find config file in class resources.");
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         properties.load(inputStream);
-
-        ReferenceTrends referenceTrends =
-                new ReferenceTrends(
-                        parseInt(properties.getProperty(REFERENCE_LENGTH)),
-                        parseInt(properties.getProperty(BASELINE_OFFSET)),
-                        parseInt(properties.getProperty(N_SMOOTH)),
-                        parseDouble(properties.getProperty(ALPHA)));
 
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("TrendDetector"));
 
@@ -90,31 +83,56 @@ public final class TrendDetector implements Serializable {
         );
 
         namedLinesRDD
+//                .filter(new FilterTopics(keyWords))
                 .mapToPair(new TopicToTimeseries())
-                .reduceByKey(new ReduceByTopic())
-                .partitionBy(new HashPartitioner(128))
-                .mapValues(new ComputeEta(properties, referenceTrends))
+                .reduceByKey(new HashPartitioner(128), new ReduceByTopic())
+                .mapValues(new ComputeEta(properties))
                 .saveAsTextFile(outputFilePattern);
 
         sc.stop();
+    }
+
+    private static final class FilterTopics implements Function<Tuple2<String, String>, Boolean> {
+        private final List<String> keyWords;
+
+        public FilterTopics(List<String> keyWords) {
+            this.keyWords = keyWords;
+        }
+
+        @Override
+        public Boolean call(Tuple2<String, String> tup) throws Exception {
+            String line = tup._2.toLowerCase();
+            for (String keyWord : keyWords) {
+                if (line.contains(keyWord)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     private static final class ComputeEta implements
             Function<List<Tuple2<Long,Double>>, List<Tuple3<Long, Double, Double>>> {
         private final WeightedDataTemplates dataTemplate;
 
-        public ComputeEta(Properties properties, ReferenceTrends referenceTrends) {
+        public ComputeEta(Properties properties) throws Exception {
             this.dataTemplate =
                     new WeightedDataTemplates(
                             parseInt(properties.getProperty(SERIES_LENGTH)),
                             parseInt(properties.getProperty(REFERENCE_LENGTH)),
                             parseDouble(properties.getProperty(LAMBDA)),
-                            referenceTrends);
+                            new ReferenceTrends(
+                                parseInt(properties.getProperty(REFERENCE_LENGTH)),
+                                parseInt(properties.getProperty(BASELINE_OFFSET)),
+                                parseInt(properties.getProperty(N_SMOOTH)),
+                                parseDouble(properties.getProperty(ALPHA))));
         }
 
         @Override
         public List<Tuple3<Long, Double, Double>> call(List<Tuple2<Long, Double>> input) throws Exception {
             List<Tuple3<Long, Double, Double>> result = new ArrayList<>();
+            dataTemplate.getTotalSeries().clear();
             for (Tuple2<Long, Double> it : input) {
                 dataTemplate.update(it._2);
                 result.add(new Tuple3<>(it._1, it._2, dataTemplate.getResult()));
@@ -140,7 +158,7 @@ public final class TrendDetector implements Serializable {
                     result.add(new Tuple2(tup1._1, tup1._2 + tup2._2));
                     idx1 += 1;
                     idx2 += 1;
-                } else if (tup1._1.compareTo(tup1._1) < 0) {
+                } else if (tup1._1.compareTo(tup2._1) < 0) {
                     result.add(tup1);
                     idx1 += 1;
                 } else {
@@ -154,7 +172,7 @@ public final class TrendDetector implements Serializable {
             }
 
             while (idx2 < list2.size()) {
-                result.add(list2.get(idx1));
+                result.add(list2.get(idx2));
                 idx2 += 1;
             }
             return result;

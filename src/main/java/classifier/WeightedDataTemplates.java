@@ -113,4 +113,8 @@ public final class WeightedDataTemplates implements Serializable {
 
         return sum;
     }
+
+    public List<Double> getTotalSeries() {
+        return totalSeries;
+    }
 }
