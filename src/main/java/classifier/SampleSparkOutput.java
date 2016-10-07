@@ -25,6 +25,7 @@ public class SampleSparkOutput implements Serializable {
 
                     @Override
                     public Boolean call(String s) throws Exception {
+                        s = s.toLowerCase();
                         for (String keyWord : keyWords) {
                             if (s.contains(keyWord)) {
                                 return true;
