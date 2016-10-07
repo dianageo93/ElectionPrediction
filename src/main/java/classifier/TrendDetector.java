@@ -41,8 +41,6 @@ public final class TrendDetector implements Serializable {
         String inputFilePattern = args[0];
         String outputFilePattern = args[1];
 
-
-
         InputStream inputStream = TrendDetector.class.getResourceAsStream(CONFIG_FILE_PATH);
         checkState(inputStream != null, "Could not find config file in class resources.");
         Properties properties = new Properties();
@@ -171,7 +169,7 @@ public final class TrendDetector implements Serializable {
 
             String fileName = input._1();
             String line = input._2();
-            SimpleDateFormat parser = new SimpleDateFormat("YYYYMMdd-HHmmss");
+            SimpleDateFormat parser = new SimpleDateFormat("yyyyMMdd-HHmmss");
             int gzIndex = fileName.lastIndexOf(".gz");
 
             Long timestamp = parser
