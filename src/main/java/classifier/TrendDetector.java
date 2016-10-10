@@ -85,7 +85,7 @@ public final class TrendDetector implements Serializable {
         namedLinesRDD
 //                .filter(new FilterTopics(keyWords))
                 .mapToPair(new TopicToTimeseries())
-                .reduceByKey(new HashPartitioner(128), new ReduceByTopic())
+                .reduceByKey(new ReduceByTopic())
                 .mapValues(new ComputeEta(properties))
                 .saveAsTextFile(outputFilePattern);
 
@@ -199,7 +199,7 @@ public final class TrendDetector implements Serializable {
                 if (tokens.length >= 3) {
                     String topic = tokens[1];
                     Double count = parseDouble(tokens[2]);
-                    return new Tuple2<>(topic, Arrays.asList(new Tuple2<>(timestamp, count)));
+                    return new Tuple2<>(topic.toLowerCase(), Arrays.asList(new Tuple2<>(timestamp, count)));
                 }
             } catch (Exception e) {}
 
