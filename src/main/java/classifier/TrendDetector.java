@@ -38,6 +38,7 @@ public final class TrendDetector implements Serializable {
 
     private static final String WIN_LENGTH = "winLength";
     private static final String DIFF = "diff";
+    private static final String INFLUENCE = "influence";
 
     public static void main(String[] args) throws Exception {
         String inputFilePattern = args[0];
@@ -120,10 +121,12 @@ public final class TrendDetector implements Serializable {
             Function<List<Tuple2<Long,Double>>, List<Tuple3<Long, Double, Double>>> {
         private final int winLength;
         private final double diff;
+        private final double influence;
 
         public ComputeSignal(Properties properties) throws Exception {
             winLength = parseInt(properties.getProperty(WIN_LENGTH));
             diff = parseDouble(properties.getProperty(DIFF));
+            influence = parseDouble(properties.getProperty(INFLUENCE));
         }
 
         @Override
@@ -138,7 +141,7 @@ public final class TrendDetector implements Serializable {
             for (Tuple2<Long, Double> it : input) {
                 views.add(it._2);
             }
-            List<Double> signal = peakSignalDetector.processTimeSeries(views, winLength, diff);
+            List<Double> signal = peakSignalDetector.processTimeSeries(views, winLength, diff, influence);
 
             for (int i = 0; i < input.size(); i++) {
                 result.add(new Tuple3<>(input.get(i)._1, input.get(i)._2, signal.get(i)));
