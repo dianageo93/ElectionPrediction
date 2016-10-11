@@ -36,6 +36,9 @@ public final class TrendDetector implements Serializable {
     private static final String N_SMOOTH = "nSmooth";
     private static final String ALPHA = "alpha";
 
+    private static final String WIN_LENGTH = "winLength";
+    private static final String DIFF = "diff";
+
     public static void main(String[] args) throws Exception {
         String inputFilePattern = args[0];
         String outputFilePattern = args[1];
@@ -83,10 +86,11 @@ public final class TrendDetector implements Serializable {
         );
 
         namedLinesRDD
-//                .filter(new FilterTopics(keyWords))
+                .filter(new FilterTopics(keyWords))
                 .mapToPair(new TopicToTimeseries())
-                .reduceByKey(new ReduceByTopic())
-                .mapValues(new ComputeEta(properties))
+                .reduceByKey(new HashPartitioner(1), new ReduceByTopic())
+//                .mapValues(new ComputeEta(properties))
+                .mapValues(new ComputeSignal(properties))
                 .saveAsTextFile(outputFilePattern);
 
         sc.stop();
@@ -109,6 +113,35 @@ public final class TrendDetector implements Serializable {
             }
 
             return false;
+        }
+    }
+
+    private static final class ComputeSignal implements
+            Function<List<Tuple2<Long,Double>>, List<Tuple3<Long, Double, Double>>> {
+        private final int winLength;
+        private final double diff;
+
+        public ComputeSignal(Properties properties) throws Exception {
+            winLength = parseInt(properties.getProperty(WIN_LENGTH));
+            diff = parseDouble(properties.getProperty(DIFF));
+        }
+
+        @Override
+        public List<Tuple3<Long, Double, Double>> call(List<Tuple2<Long, Double>> input) throws Exception {
+            PeakSignalDetector peakSignalDetector = new PeakSignalDetector();
+
+            List<Double> views = new ArrayList<>();
+            for (Tuple2<Long, Double> it : input) {
+                views.add(it._2);
+            }
+            List<Double> signal = peakSignalDetector.processTimeSeries(views, winLength, diff);
+
+            List<Tuple3<Long, Double, Double>> result = new ArrayList<>();
+            for (int i = 0; i < input.size(); i++) {
+                result.add(new Tuple3<>(input.get(i)._1, input.get(i)._2, signal.get(i)));
+            }
+
+            return result;
         }
     }
 
