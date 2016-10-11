@@ -128,6 +128,10 @@ public final class TrendDetector implements Serializable {
 
         @Override
         public List<Tuple3<Long, Double, Double>> call(List<Tuple2<Long, Double>> input) throws Exception {
+            List<Tuple3<Long, Double, Double>> result = new ArrayList<>();
+            if (input.size() <= winLength) {
+                return result;
+            }
             PeakSignalDetector peakSignalDetector = new PeakSignalDetector();
 
             List<Double> views = new ArrayList<>();
@@ -136,7 +140,6 @@ public final class TrendDetector implements Serializable {
             }
             List<Double> signal = peakSignalDetector.processTimeSeries(views, winLength, diff);
 
-            List<Tuple3<Long, Double, Double>> result = new ArrayList<>();
             for (int i = 0; i < input.size(); i++) {
                 result.add(new Tuple3<>(input.get(i)._1, input.get(i)._2, signal.get(i)));
             }

@@ -61,13 +61,13 @@ public class PeakSignalDetector implements Serializable {
     }
 
     public List<Double> processTimeSeries(List<Double> timeSeries, int K, double dist) {
+        List<Double> signal = new ArrayList<>();
         List<Double> movingStd = movingStd(timeSeries, K);
         List<Double> movingMean = movingMean(timeSeries, K);
 
         double prevStd = movingStd.get(K);
         double prevMean = movingMean.get(K);
 
-        List<Double> signal = new ArrayList<>();
         for (int i = 0; i < K; i++) {
             signal.add(0d);
         }
