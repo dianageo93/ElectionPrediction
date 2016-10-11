@@ -1,0 +1,63 @@
+<head>
+    <!-- Plotly.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="jquery.csv.js"></script>
+</head>
+
+<body>
+
+    <input type="file" id="input">
+    <div id="myDiv" style="width: 100%; height: 100%;">
+        <!-- Plotly chart will be drawn inside this DIV -->
+    </div>
+    <script>
+        $("#input").change(function(e) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var csv = $.csv.toArrays(e.target.result, {
+                    separator: ","
+                });
+
+                var time = [];
+                var views = [];
+                var signal = [];
+                var rows = [];
+                for (var i = 1; i < csv.length; i++) {
+                    time.push(csv[i][3]);
+                    views.push(parseFloat(csv[i][1]));
+                    signal.push(parseFloat(csv[i][2]));
+                }
+
+                var data =[{
+                    x: time,
+                    y: views,
+                    type: 'scatter',
+                    name: 'Page views'
+                },
+                {
+                    x: time,
+                    y: signal,
+                    type: 'scatter',
+                    yaxis: 'y2',
+                    name: 'Signal'
+                }];
+
+                var layout = {
+                    title: '',
+                    yaxis: {title: 'Page views'},
+                    yaxis2: {
+                        title: 'Signal',
+                        titlefont: {color: 'rgb(148, 103, 189)'},
+                        tickfont: {color: 'rgb(148, 103, 189)'},
+                        overlaying: 'y',
+                        side: 'right',
+                        range: [0, 2]
+                    }
+                };
+                Plotly.newPlot('myDiv', data, layout);
+            };
+            reader.readAsText(e.target.files[0]);
+        });
+    </script>
+</body>
