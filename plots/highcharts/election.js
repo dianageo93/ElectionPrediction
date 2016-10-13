@@ -50,7 +50,7 @@ function processElectionData(e) {
         chart: {
             type: 'bubble',
             plotBorderWidth: 1,
-            zoomType: 'xy'
+            panning: true
         },
 
         legend: {
@@ -97,6 +97,10 @@ function processElectionData(e) {
         //        }
         //    }
         //},
+
+        mapNavigation: {
+            enabled: true,
+        },
 
         series: bubbleChartSeries
     });
