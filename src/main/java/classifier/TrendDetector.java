@@ -6,7 +6,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.spark.HashPartitioner;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaNewHadoopRDD;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -69,7 +68,11 @@ public final class TrendDetector implements Serializable {
                         return new Iterator<Tuple2<String, String>>() {
                             @Override
                             public boolean hasNext() {
-                                return lines.hasNext();
+                                try {
+                                    return lines.hasNext();
+                                } catch (Exception e) {
+                                    return false;
+                                }
                             }
                             @Override
                             public Tuple2<String, String> next() {
@@ -87,13 +90,13 @@ public final class TrendDetector implements Serializable {
         );
 
         namedLinesRDD
-                .filter(new FilterTopics(keyWords))
+//                .filter(new FilterTopics(keyWords))
                 .mapToPair(new TopicToTimeseries())
-                .reduceByKey(new HashPartitioner(1), new ReduceByTopic())
+                .reduceByKey(new ReduceByTopic())
 //                .mapValues(new ComputeEta(properties))
                 .mapValues(new ComputeSignal(properties))
-                .saveAsTextFile(outputFilePattern);
-
+                .saveAsTextFile(outputFilePattern, org.apache.hadoop.io.compress.GzipCodec.class);
+//                .saveAsObjectFile(outputFilePattern);
         sc.stop();
     }
 
@@ -235,7 +238,8 @@ public final class TrendDetector implements Serializable {
 
             try {
                 String[] tokens = line.split(" ");
-                if (tokens.length >= 3) {
+                if (tokens.length >= 3 && (tokens[0].startsWith("en") || tokens[0].startsWith("es"))) {
+                    // English and Spanish topics
                     String topic = tokens[1];
                     Double count = parseDouble(tokens[2]);
                     return new Tuple2<>(topic.toLowerCase(), Arrays.asList(new Tuple2<>(timestamp, count)));
