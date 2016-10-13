@@ -1,0 +1,145 @@
+Date,Type,Party,Location,Topic
+2016-01-02,semi-open caucus,democrats,Iowa,
+2016-02-09,semi-closed primary,democrats,New Hampshire,
+2016-02-20,closed caucus,democrats,Nevada,
+2016-02-27,open primary,democrats,South Carolina,
+2016-03-01,open primary,democrats,Alabama,
+2016-03-01,closed caucus,democrats,American Samoa,
+2016-03-01,open primary,democrats,Arkansas,
+2016-03-01,closed caucus,democrats,Colorado,
+2016-03-01,open primary,democrats,Georgia,
+2016-03-01,semi-closed primary,democrats,Massachusetts,
+2016-03-01,open caucus,democrats,Minnesota,
+2016-03-01,semi-closed primary,democrats,Oklahoma,
+2016-03-01,open primary,democrats,Tennessee,
+2016-03-01,open primary,democrats,Texas,
+2016-03-01,open primary,democrats,Vermont,
+2016-03-01,open primary,democrats,Virginia,
+2016-03-05,closed caucus,democrats,Kansas,
+2016-03-05,closed primary,democrats,Louisiana,
+2016-03-05,closed caucus,democrats,Nebraska,
+2016-03-06,closed caucus,democrats,Maine,
+2016-03-07,closed primary,democrats,Democrats Abroad,
+2016-03-08,open primary,democrats,Michigan,
+2016-03-08,open primary,democrats,Mississippi,
+2016-03-12,closed caucus,democrats,Northern Marianas,
+2016-03-15,closed primary,democrats,Florida,
+2016-03-15,open primary,democrats,Illinois,
+2016-03-15,open primary,democrats,Missouri,
+2016-03-15,semi-closed primary,democrats,North Carolina,
+2016-03-15,semi-open primary,democrats,Ohio,
+2016-03-22,closed primary,democrats,Arizona,
+2016-03-22,open caucus,democrats,Idaho,
+2016-03-22,semi-open caucus,democrats,Utah,
+2016-03-26,closed caucus,democrats,Alaska,
+2016-03-26,semi-closed caucus,democrats,Hawaii,
+2016-03-26,open caucus,democrats,Washington,
+2016-04-05,open primary,democrats,Wisconsin,
+2016-04-09,closed caucus,democrats,Wyoming,
+2016-04-19,closed primary,democrats,New York,
+2016-04-26,closed primary,democrats,Connecticut,
+2016-04-26,closed primary,democrats,Delaware,
+2016-04-26,closed primary,democrats,Maryland,
+2016-04-26,closed primary,democrats,Pennsylvania,
+2016-04-26,semi-closed primary,democrats,Rhode Island,
+2016-05-03,open primary,democrats,Indiana,
+2016-05-07,closed caucus,democrats,Guam,
+2016-05-10,closed primary,democrats,Nebraska,
+2016-05-10,semi-closed primary,democrats,West Virginia,
+2016-05-17,closed primary,democrats,Kentucky,
+2016-05-17,closed primary,democrats,Oregon,
+2016-05-24,open primary,democrats,Washington,
+2016-06-04,closed caucus,democrats,Virginia Islands,
+2016-06-05,open primary,democrats,Puerto Rico,
+2016-06-07,semi-closed primary,democrats,California,
+2016-06-07,open primary,democrats,Montana,
+2016-06-07,semi-closed primary,democrats,New Jersey,
+2016-06-07,closed primary,democrats,New Mexico,
+2016-06-07,open caucus,democrats,North Dakota,
+2016-06-07,semi-closed primary,democrats,South Dakota,
+2016-06-14,closed primary,democrats,District of Columbia,
+2015-11-13,debate,democrats,Las Vegas,"U.S. involvement in the Middle East, gun control and economic policy, Syrian Civil War, Trans-Pacific Partnership, email controversary, ""casino capitalist process"", better mental health services, background checks"
+2015-11-15,debate,democrats,Des Moines,"terrorist attack in Paris, terrorism, military, Islamic State, US foreign policy, 2002 Clint;s vote to invade Iraq, al Qaeda, campaigne finance, banking regulations, Clinton's ties with Wall Street, 9-11 terrorist attacks, Clinton NY Senator"
+2015-12-20,debate,democrats,Manchester,"Sander's campaign breach of Clinton's campaign data, ISIS, gun control, depose President Assad of Syria, Middle East, Wall Street, the role of the First Spouse (FLOTUS)"
+2016-01-18,debate,democrats,Charleston,"ObamaCare, gun lobby, Sanders' Medicare for all, Affordable Care Act, "
+2016-02-05,debate,democrats,Durham,"death penalty, Russia, Iran, North Korea, Clinton campaign donations, Wall Street"
+2016-02-12,debate,democrats,Milwaukee,"race, size of the government, funding (their goals) -> Wall Street and Clinton's Super PAC, Sanders' Medicare vs the Obamacare, first women president, affordable college, Henry Kissinger, terrorist attacks on America, Russia, refugees, Barack Obama"
+2016-03-07,debate,democrats,Flint,"trade, Clinton's email controversary, Clinton's private lobby for trade with Columbia, Wall Street, auto industry"
+2016-03-10,debate,democrats,Miami,"immigration reform, Clinton's email scandal"
+2016-04-15,debate,democrats,Brooklyn,"gun control, Sander's tax release, Clinton's paid speeches to big banks, big banks"
+2016-02-01,binding precinct caucuses,republicans,Iowa,
+2016-02-09,binding primary,republicans,New Hampshire,
+2016-02-20,binding primary,republicans,South Carolina,
+2016-02-23,binding precinct caucuses,republicans,Nevada,
+2016-03-01,binding primary,republicans,Alabama,
+2016-03-01,binding legislative district conventions,republicans,Alaska,
+2016-03-01,binding primary,republicans,Arkansas,
+2016-03-01,binding primary,republicans,Georgia,
+2016-03-01,binding primary,republicans,Massachusetts,
+2016-03-01,binding precinct caucuses,republicans,Minnesota,
+2016-03-01,binding primary,republicans,Oklahoma,
+2016-03-01,binding primary,republicans,Tennessee,
+2016-03-01,binding primary,republicans,Texas,
+2016-03-01,binding primary,republicans,Vermont,
+2016-03-01,binding primary,republicans,Virginia,
+2016-03-05,binding precinct caucuses,republicans,Kansas,
+2016-03-05,binding caucuses,republicans,Kentucky,
+2016-03-05,binding primary,republicans,Louisiana,
+2016-03-05,binding municipal caucuses,republicans,Maine,
+2016-03-06,binding primary,republicans,Puerto Rico,
+2016-03-08,binding precinct caucuses,republicans,Hawaii,
+2016-03-08,binding primary,republicans,Idaho,
+2016-03-08,binding primary,republicans,Michigan,
+2016-03-08,binding primary,republicans,Mississippi,
+2016-03-10,territorial caucus,republicans,US Virgin Islands,
+2016-03-12,convention,republicans,District of Columbia,
+2016-03-12,territorial caucus,republicans,Guam,
+2016-03-12,binding county conventions,republicans,Wyoming,
+2016-03-15,binding primary,republicans,Florida,
+2016-03-15,binding primary,republicans,Illinois,
+2016-03-15,binding primary,republicans,Missouri,
+2016-03-15,binding primary,republicans,North Carolina,
+2016-03-15,binding primary,republicans,Northern Mariana Islands,
+2016-03-15,binding primary,republicans,Ohio,
+2016-03-22,territorial caucus,republicans,American Samoa,
+2016-03-22,binding primary,republicans,Arizona,
+2016-03-22,binding precinct caucuses,republicans,Utah,
+2016-04-01,state convention,republicans,North Dakota,
+2016-04-05,binding primary,republicans,Wisconsin,
+2016-04-07,district and state convention,republicans,Colorado,
+2016-04-14,state convention,republicans,Wyoming,
+2016-04-19,binding primary,republicans,New York,
+2016-04-26,binding primary,republicans,Conneticut,
+2016-04-26,binding primary,republicans,Delaware,
+2016-04-26,binding primary,republicans,Maryland,
+2016-04-26,binding primary,republicans,Pennsylvania,
+2016-04-26,binding primary,republicans,Rhode Island,
+2016-05-03,binding primary,republicans,Indiana,
+2016-05-10,binding primary,republicans,Nebraska,
+2016-05-10,binding primary,republicans,West Virginia,
+2016-05-17,binding primary,republicans,Oregon,
+2016-05-24,binding primary,republicans,Washington,
+2016-06-07,binding primary,republicans,California,
+2016-06-07,binding primary,republicans,Montana,
+2016-06-07,binding primary,republicans,New Jersey,
+2016-06-07,binding primary,republicans,New Mexico,
+2016-06-07,binding primary,republicans,South Dakota,
+2015-08-06,debate,republicans,Cleveland,"illegal immigration, NSA surveillance program, healthcare, welfare reform, sexism"
+2015-08-07,debate,republicans,Cleveland,"illegal immigration, NSA surveillance program, healthcare, welfare reform, sexism"
+2015-09-16,debate,republicans,Simi Valley,"Trump's attack on Fiorina's face in a Rolling Stone interview, Trump-Fiorina business records, immigration, casino gambling in Florida, women's health issues, foreign policy, marijuana legalization"
+2015-09-17,debate,republicans,Simi Valley,"Trump's attack on Fiorina's face in a Rolling Stone interview, Trump-Fiorina business records, immigration, casino gambling in Florida, women's health issues, foreign policy, marijuana legalization"
+2015-10-28,debate,republicans,Boulder,"Rubio's attendance record as Senator, Kasich’s record as Governor, social security and benefits"
+2015-10-29,debate,republicans,Boulder,"Rubio's attendance record as Senator, Kasich’s record as Governor, social security and benefits"
+2015-11-10,debate,republicans,Milwaukee,"jobs, taxes, US economy, immigration, Russia, military spendings, tax plan, bailing out the banks, net neutrality, Obama administration regulations, Carson's background"
+2015-11-11,debate,republicans,Milwaukee,"jobs, taxes, US economy, immigration, Russia, military spendings, tax plan, bailing out the banks, net neutrality, Obama administration regulations, Carson's background"
+2015-12-15,debate,republicans,Las Vegas,"foreign policy, Trump's proposed Muslim ban, NSA, immigration, 9-11 attacks"
+2015-12-16,debate,republicans,Las Vegas,"foreign policy, Trump's proposed Muslim ban, NSA, immigration, 9-11 attacks"
+2016-01-14,debate,republicans,N. Charleston,"Cruz's attendance record, Cruz's ""elligibility"" (being born Canadian) and ""New York Values"", trade with China, tax plan, illegal immigration records, Barack Obama, Hillary Clinton"
+2016-01-15,debate,republicans,N. Charleston,"Cruz's attendance record, Cruz's ""elligibility"" (being born Canadian) and ""New York Values"", trade with China, tax plan, illegal immigration records, Barack Obama, Hillary Clinton"
+2016-01-28,debate,republicans,Des Moines,"immigration, foreign policy, NSA metadata program, Cruz's and Rubio's Senate records, Hillary Clinton - Benghazi & email scandal (compared to El Chapo, Seann Pen should interview her), the media, the GOP establishment"
+2016-01-29,debate,republicans,Des Moines,"immigration, foreign policy, NSA metadata program, Cruz's and Rubio's Senate records, Hillary Clinton - Benghazi & email scandal (compared to El Chapo, Seann Pen should interview her), the media, the GOP establishment"
+2016-02-07,debate,republicans,Goffstown,"eminent domain, Barack Obama, the Democrats, Rubio's poor attendance record in the Senate"
+2016-02-14,debate,republicans,Greenville,"Russia, George W.Bush, illegal immigration, Jeb Bush's record as governor, Kasich's Medicaid, Trump's Planned Parenthood, death of Supreme Court Justice Antonin Scalia"
+2016-02-26,debate,republicans,Houston,"illegal immigration, Israel, Trump's business record, religious liberty, Trump's planned parenthood, Trump's healthcare, John Kerry as secretary of state, Trump bankruptcy, Trump University, Trump's use of undocumented and foriegn workers on his properties in Florida and New York, Trump Polish workers"
+2016-03-04,debate,republicans,Detroit,"Trump's penis size, Rubio's comments about the size of Trump's hands"
+2016-03-11,debate,republicans,Coral Gables,"entitlemnet reform, illegal immigration, Hillary Clinton, Social Security"
