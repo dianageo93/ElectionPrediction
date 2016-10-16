@@ -1,5 +1,6 @@
 <html>
     <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/maps/modules/map.js"></script>
@@ -8,8 +9,12 @@
         <script src="jquery.csv.js"></script>
     </head>
     <body>
-        <div id="bubble_chart"></div>
-        <table id="spark_lines"></table>
+        <div class="container">
+            <div id="bubble_chart"></div>
+            <table class="bordered">
+                <tbody id="spark_lines"></tbody>
+            </table>
+        </div>
         <script src="election.js"></script>
     </body>
 </html>

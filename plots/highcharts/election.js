@@ -160,7 +160,8 @@ function processSpikes(spikesArray) {
                 plotLines.push({
                     color: 'rgba(255, 84, 84, 0.5)',
                     value: views.length,
-                    width: 1
+                    width: 1,
+                    dashStyle: 'Dash'
                 });
             }
             views = views.concat(spike[days[j]]);
@@ -170,6 +171,7 @@ function processSpikes(spikesArray) {
         spike.total_views = totalViews;
         spike.views = views;
         spike.plot_lines = plotLines;
+        spike.topic = spike.topic.replace('_', ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
     }
     spikes = spikesArray;
     spikes.sort(spikesCmp);
