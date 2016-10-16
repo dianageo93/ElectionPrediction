@@ -216,14 +216,15 @@ function plotSparklines(timeStamp) {
 
     $("#spark_lines tr").remove();
 
-    for (var i = start; i < end; i++) {
+    var localSpikes = spikes.slice(start, end);
+    localSpikes.forEach(function (spike) {
         var row = $('<tr></tr>');
-        row.append('<td>' + spikes[i].topic + '</td>');
+        row.append('<td>' + spike.topic + '</td>');
         var sparkLine = $('<td></td>');
         row.append(sparkLine);
         $('#spark_lines').append(row);
-        plotSparkline(sparkLine, spikes[i]);
-    }
+        plotSparkline(sparkLine, spike);
+    });
 }
 
 function plotSparkline(el, data) {
