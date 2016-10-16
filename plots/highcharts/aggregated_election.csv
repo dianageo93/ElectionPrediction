@@ -58,15 +58,15 @@ Date,Type,Party,Location,Topic
 2016-06-07,open caucus,democrats,North Dakota,
 2016-06-07,semi-closed primary,democrats,South Dakota,
 2016-06-14,closed primary,democrats,District of Columbia,
-2015-11-13,debate,democrats,Las Vegas,"U.S. involvement in the Middle East, gun control and economic policy, Syrian Civil War, Trans-Pacific Partnership, email controversary, ""casino capitalist process"", better mental health services, background checks"
-2015-11-15,debate,democrats,Des Moines,"terrorist attack in Paris, terrorism, military, Islamic State, US foreign policy, 2002 Clint;s vote to invade Iraq, al Qaeda, campaigne finance, banking regulations, Clinton's ties with Wall Street, 9-11 terrorist attacks, Clinton NY Senator"
-2015-12-20,debate,democrats,Manchester,"Sander's campaign breach of Clinton's campaign data, ISIS, gun control, depose President Assad of Syria, Middle East, Wall Street, the role of the First Spouse (FLOTUS)"
-2016-01-18,debate,democrats,Charleston,"ObamaCare, gun lobby, Sanders' Medicare for all, Affordable Care Act, "
-2016-02-05,debate,democrats,Durham,"death penalty, Russia, Iran, North Korea, Clinton campaign donations, Wall Street"
-2016-02-12,debate,democrats,Milwaukee,"race, size of the government, funding (their goals) -> Wall Street and Clinton's Super PAC, Sanders' Medicare vs the Obamacare, first women president, affordable college, Henry Kissinger, terrorist attacks on America, Russia, refugees, Barack Obama"
-2016-03-07,debate,democrats,Flint,"trade, Clinton's email controversary, Clinton's private lobby for trade with Columbia, Wall Street, auto industry"
-2016-03-10,debate,democrats,Miami,"immigration reform, Clinton's email scandal"
-2016-04-15,debate,democrats,Brooklyn,"gun control, Sander's tax release, Clinton's paid speeches to big banks, big banks"
+2015-11-12,debate,democrats,Las Vegas,"U.S. involvement in the Middle East, gun control and economic policy, Syrian Civil War, Trans-Pacific Partnership, email controversary, ""casino capitalist process"", better mental health services, background checks"
+2015-11-14,debate,democrats,Des Moines,"terrorist attack in Paris, terrorism, military, Islamic State, US foreign policy, 2002 Clint;s vote to invade Iraq, al Qaeda, campaigne finance, banking regulations, Clinton's ties with Wall Street, 9-11 terrorist attacks, Clinton NY Senator"
+2015-12-19,debate,democrats,Manchester,"Sander's campaign breach of Clinton's campaign data, ISIS, gun control, depose President Assad of Syria, Middle East, Wall Street, the role of the First Spouse (FLOTUS)"
+2016-01-17,debate,democrats,Charleston,"ObamaCare, gun lobby, Sanders' Medicare for all, Affordable Care Act, "
+2016-02-04,debate,democrats,Durham,"death penalty, Russia, Iran, North Korea, Clinton campaign donations, Wall Street"
+2016-02-11,debate,democrats,Milwaukee,"race, size of the government, funding (their goals) -> Wall Street and Clinton's Super PAC, Sanders' Medicare vs the Obamacare, first women president, affordable college, Henry Kissinger, terrorist attacks on America, Russia, refugees, Barack Obama"
+2016-03-06,debate,democrats,Flint,"trade, Clinton's email controversary, Clinton's private lobby for trade with Columbia, Wall Street, auto industry"
+2016-03-09,debate,democrats,Miami,"immigration reform, Clinton's email scandal"
+2016-04-14,debate,democrats,Brooklyn,"gun control, Sander's tax release, Clinton's paid speeches to big banks, big banks"
 2016-02-01,binding precinct caucuses,republicans,Iowa,
 2016-02-09,binding primary,republicans,New Hampshire,
 2016-02-20,binding primary,republicans,South Carolina,
@@ -125,19 +125,12 @@ Date,Type,Party,Location,Topic
 2016-06-07,binding primary,republicans,New Mexico,
 2016-06-07,binding primary,republicans,South Dakota,
 2015-08-06,debate,republicans,Cleveland,"illegal immigration, NSA surveillance program, healthcare, welfare reform, sexism"
-2015-08-07,debate,republicans,Cleveland,"illegal immigration, NSA surveillance program, healthcare, welfare reform, sexism"
 2015-09-16,debate,republicans,Simi Valley,"Trump's attack on Fiorina's face in a Rolling Stone interview, Trump-Fiorina business records, immigration, casino gambling in Florida, women's health issues, foreign policy, marijuana legalization"
-2015-09-17,debate,republicans,Simi Valley,"Trump's attack on Fiorina's face in a Rolling Stone interview, Trump-Fiorina business records, immigration, casino gambling in Florida, women's health issues, foreign policy, marijuana legalization"
 2015-10-28,debate,republicans,Boulder,"Rubio's attendance record as Senator, Kasich’s record as Governor, social security and benefits"
-2015-10-29,debate,republicans,Boulder,"Rubio's attendance record as Senator, Kasich’s record as Governor, social security and benefits"
 2015-11-10,debate,republicans,Milwaukee,"jobs, taxes, US economy, immigration, Russia, military spendings, tax plan, bailing out the banks, net neutrality, Obama administration regulations, Carson's background"
-2015-11-11,debate,republicans,Milwaukee,"jobs, taxes, US economy, immigration, Russia, military spendings, tax plan, bailing out the banks, net neutrality, Obama administration regulations, Carson's background"
 2015-12-15,debate,republicans,Las Vegas,"foreign policy, Trump's proposed Muslim ban, NSA, immigration, 9-11 attacks"
-2015-12-16,debate,republicans,Las Vegas,"foreign policy, Trump's proposed Muslim ban, NSA, immigration, 9-11 attacks"
 2016-01-14,debate,republicans,N. Charleston,"Cruz's attendance record, Cruz's ""elligibility"" (being born Canadian) and ""New York Values"", trade with China, tax plan, illegal immigration records, Barack Obama, Hillary Clinton"
-2016-01-15,debate,republicans,N. Charleston,"Cruz's attendance record, Cruz's ""elligibility"" (being born Canadian) and ""New York Values"", trade with China, tax plan, illegal immigration records, Barack Obama, Hillary Clinton"
 2016-01-28,debate,republicans,Des Moines,"immigration, foreign policy, NSA metadata program, Cruz's and Rubio's Senate records, Hillary Clinton - Benghazi & email scandal (compared to El Chapo, Seann Pen should interview her), the media, the GOP establishment"
-2016-01-29,debate,republicans,Des Moines,"immigration, foreign policy, NSA metadata program, Cruz's and Rubio's Senate records, Hillary Clinton - Benghazi & email scandal (compared to El Chapo, Seann Pen should interview her), the media, the GOP establishment"
 2016-02-07,debate,republicans,Goffstown,"eminent domain, Barack Obama, the Democrats, Rubio's poor attendance record in the Senate"
 2016-02-14,debate,republicans,Greenville,"Russia, George W.Bush, illegal immigration, Jeb Bush's record as governor, Kasich's Medicaid, Trump's Planned Parenthood, death of Supreme Court Justice Antonin Scalia"
 2016-02-26,debate,republicans,Houston,"illegal immigration, Israel, Trump's business record, religious liberty, Trump's planned parenthood, Trump's healthcare, John Kerry as secretary of state, Trump bankruptcy, Trump University, Trump's use of undocumented and foriegn workers on his properties in Florida and New York, Trump Polish workers"
