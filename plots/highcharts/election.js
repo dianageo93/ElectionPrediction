@@ -1,12 +1,9 @@
 var spikes;
+var spinner;
 
 $(document).ready(function() {
-    $.ajax({
-        type: "GET",
-        url: "aggregated_election.csv",
-        dataType: "text",
-        success: function(data) {processElectionData(data);}
-     });
+    var target = document.getElementById('bubble_chart')
+    spinner = new Spinner().spin(target);
     $.ajax({
         type: "GET",
         url: "spikes-300.json",
@@ -16,6 +13,24 @@ $(document).ready(function() {
 });
 
 function processElectionData(e) {
+    var maxSpikesPerEvent = 0;
+    var maxViewsPerEvent = 0;
+    var spikesPerEvent = 1, viewsPerEvent = spikes[0].total_views;
+
+    for (var i = 1; i < spikes.length; i++) {
+        if (spikes[i].event_timestamp != spikes[i - 1].event_timestamp) {
+            maxSpikesPerEvent = Math.max(maxSpikesPerEvent, spikesPerEvent);
+            maxViewsPerEvent = Math.max(maxViewsPerEvent, viewsPerEvent);
+            spikesPerEvent = 0;
+            viewsPerEvent = 0;
+        }
+        spikesPerEvent += 1;
+        viewsPerEvent += spikes[i].total_views;
+    }
+
+    maxSpikesPerEvent = Math.max(maxSpikesPerEvent, spikesPerEvent);
+    maxViewsPerEvent = Math.max(maxViewsPerEvent, viewsPerEvent);
+
     var csv = $.csv.toObjects(e, {
         separator: ","
     });
@@ -30,10 +45,20 @@ function processElectionData(e) {
             var evt = uniqueEvents[date];
         }
         else {
+            var spikeDate = new Date(date);
+            spikeDate.setHours(7); // CST time zone
+            var target = spikeDate.getTime();
+            var start = bisectLeft(target);
+            var end = bisectRight(target);
+            var views = 0;
+            for (var i = start; i < end; i++) {
+               views += spikes[i].total_views;
+            }
+
             var evt = {
                 x: date,
-                y: 15,
-                z: 15,
+                y: 5 + (end - start) / maxSpikesPerEvent * 60,
+                z: 5 + views / maxViewsPerEvent * 15,
                 tooltip: '',
                 parties: new Set()
             }
@@ -74,6 +99,7 @@ function processElectionData(e) {
         }
     ];
 
+    spinner.stop();
     $('#bubble_chart').highcharts({
 
         chart: {
@@ -104,7 +130,7 @@ function processElectionData(e) {
             title: {
                 text: 'No. of spiking topics'
             },
-            maxPadding: 0.2
+            //maxPadding: 0.2
         },
 
         tooltip: {
@@ -171,10 +197,17 @@ function processSpikes(spikesArray) {
         spike.total_views = totalViews;
         spike.views = views;
         spike.plot_lines = plotLines;
-        spike.topic = spike.topic.replace('_', ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+        spike.topic = spike.topic.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
     }
     spikes = spikesArray;
     spikes.sort(spikesCmp);
+
+    $.ajax({
+        type: "GET",
+        url: "aggregated_election.csv",
+        dataType: "text",
+        success: function(data) {processElectionData(data);}
+    });
 }
 
 function bisectLeft(target) {
