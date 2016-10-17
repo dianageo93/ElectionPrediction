@@ -10,25 +10,42 @@
         <script src="jquery.csv.js"></script>
     </head>
     <body>
-    <div class="row">
-        <div class="col s2">
-            <div class="card-panel blue-grey">
-                <span class="white-text">Select an event by clicking on a bubble to see a list of Wikipedia topics that have
-                    spiked before, during or after the selected election event.<br> The sparklines are divieded into 5 buckets of 24
+        <div class="row">
+            <div class="col s3">
+                <div class="card-panel blue-grey">
+                    <span class="white-text">Select an event by clicking on a bubble to see a list of Wikipedia topics that have
+                    spiked before, during or after the selected election event.<br>
+                    On the left side you can see changes in the polls while on the right there is a list of spiking topics.<br>
+                    The sparklines are divieded into 5 buckets of 24
                     hours as follows:
-              </span>
+                    </span>
+                </div>
+                <div class="card-image">
+                    <object data="spike.svg" type="image/svg+xml" style="width: 100%;">
+                    <img src="spike.png" style="width: 100%;">
+                    </object>
+                </div>
             </div>
-            <div class="card-image">
-              <img src="spike.png" style="width: 100%;">
+            <div class="col s9">
+                <div id="bubble_chart"></div>
             </div>
         </div>
-        <div class="col s9">
-            <div id="bubble_chart"></div>
-            <table class="bordered">
-                <tbody id="spark_lines"></tbody>
-            </table>
+        <div class="row hide" id="title">
+            <div class="col s4">
+                <h5 class="center-align">Polls</h5>
+            </div>
+            <div class="col s8">
+                <h5 class="center-align">Wikipedia topics</h5>
+            </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col s4" id="polls"></div>
+            <div class="col s8">
+                <table class="bordered">
+                    <tbody id="spark_lines"></tbody>
+                </table>
+            </div>
+        </div>
         <script src="election.js"></script>
     </body>
 </html>

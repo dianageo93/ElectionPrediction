@@ -1,14 +1,36 @@
 var spikes;
 var spinner;
+var polls = {};
 
 $(document).ready(function() {
     var target = document.getElementById('bubble_chart')
     spinner = new Spinner().spin(target);
     $.ajax({
         type: "GET",
-        url: "spikes-300-3.json",
+        url: "spikes-300.json",
         dataType: "json",
         success: function(data) {processSpikes(data);}
+     });
+
+    $.ajax({
+        type: "GET",
+        url: "democrats_polls.json",
+        dataType: "json",
+        success: function(data) {processPolls('Democrats', data);}
+     });
+
+    $.ajax({
+        type: "GET",
+        url: "republicans_polls.json",
+        dataType: "json",
+        success: function(data) {processPolls('Republicans', data);}
+     });
+
+    $.ajax({
+        type: "GET",
+        url: "./clinton_trump_polls.json",
+        dataType: "json",
+        success: function(data) {processPolls('Clinton vs Trump', data);}
      });
 
     (function (H) {
@@ -182,7 +204,8 @@ function processElectionData(e) {
         chart: {
             type: 'bubble',
             plotBorderWidth: 1,
-            panning: true
+            panning: true,
+            height: 350
         },
 
         legend: {
@@ -222,6 +245,8 @@ function processElectionData(e) {
                 point: {
                     events: {
                         click: function (e) {
+                            $('#title').removeClass('hide');
+                            plotPolls(e.point.category);
                             plotSparklines(e.point.category);
                         }
                     }
@@ -248,6 +273,10 @@ function spikesCmp(a, b) {
         return -1;
     else
         return 0;
+}
+
+function pollCmp(a, b) {
+    return a.date - b.date;
 }
 
 function processSpikes(spikesArray) {
@@ -284,6 +313,30 @@ function processSpikes(spikesArray) {
         dataType: "text",
         success: function(data) {processElectionData(data);}
     });
+}
+
+function processPolls(name, data) {
+    polls[name] = data.poll.rcp_avg;
+    for (var i = 0; i < polls[name].length; i++) {
+        polls[name][i].date = Date.parse(polls[name][i].date);
+    }
+    polls[name].sort(pollCmp);
+}
+
+function bSearch(arr, target) {
+    var start = 0;
+    var end = arr.length;
+
+    while (start < end) {
+        var mid = start + Math.floor((end - start) / 2);
+        if (arr[mid].date == target)
+            return mid
+        else if (arr[mid].date < target)
+            start = mid + 1;
+        else
+            end = mid;
+    }
+    return -1;
 }
 
 function bisectLeft(target) {
@@ -332,6 +385,60 @@ function plotSparklines(timeStamp) {
     });
 }
 
+function plotPolls(timeStamp) {
+    $("#polls").empty();
+    for (var title in polls) {
+        var index = bSearch(polls[title], timeStamp);
+        if (index < 0) {
+            continue;
+        }
+        var start = Math.max(index - 2, 0);
+        var end = Math.min(index + 3, polls[title].length);
+        var candidates = {};
+        var plotLines = [];
+
+        for (var i = start; i < end; i++) {
+            var pollData = polls[title][i];
+            if (i > start) {
+                plotLines.push({
+                    color: 'rgba(255, 84, 84, 0.5)',
+                    value: Math.floor((polls[title][i].date + polls[title][i - 1].date) / 2),
+                    width: 1,
+                    dashStyle: 'Dash',
+                });
+            }
+
+            for (var j = 0; j < pollData.candidate.length; j++) {
+                var name = pollData.candidate[j].name;
+                if (!(name in candidates)) {
+                    candidates[name] = [];
+                }
+                candidates[name].push({
+                    x: pollData.date,
+                    y: parseFloat(pollData.candidate[j].value)
+                });
+            }
+        }
+
+        var data = {
+            title: title,
+            plot_lines: plotLines,
+            series: []
+        };
+
+        for (var name in candidates) {
+            data.series.push({
+                name: name,
+                data: candidates[name]
+            });
+        }
+
+        var poll = $('<div></div>');
+        $('#polls').append(poll);
+        plotPoll(poll, data);
+    }
+}
+
 function plotSparkline(el, data) {
     el.highcharts({
         chart: {
@@ -346,7 +453,10 @@ function plotSparkline(el, data) {
             skipClone: true
         },
         credits: {enabled: false},
-        exporting: {enabled: false},
+        exporting: {
+            enabled: false,
+            type: 'image/svg+xml'
+        },
         title: {
             text: ''
         },
@@ -415,3 +525,33 @@ function plotSparkline(el, data) {
         }]
     });
 }
+
+function plotPoll(el, data) {
+    el.highcharts({
+        chart: {
+            width: 400,
+            height: 240,
+        },
+        credits: {enabled: false},
+        exporting: {enabled: false},
+        title: {
+            text: data.title
+        },
+        xAxis: {
+            type: 'datetime',
+            plotLines: data.plot_lines
+        },
+        yAxis: {
+            title: {
+                text: '%'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: data.series
+    });
+};
