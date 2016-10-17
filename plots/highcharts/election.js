@@ -10,6 +10,84 @@ $(document).ready(function() {
         dataType: "json",
         success: function(data) {processSpikes(data);}
      });
+
+    (function (H) {
+        H.wrap(H.Chart.prototype, 'mapZoom', function (proceed) {
+            // Highcharts
+            var pick = H.pick,
+                UNDEFINED;
+            // arguments
+            var howMuch = arguments[1],
+                centerXArg = arguments[2],
+                centerYArg = arguments[3],
+                mouseX = arguments[4],
+                mouseY = arguments[5];
+
+            var chart = this,
+                xAxis = chart.xAxis[0],
+                xRange = xAxis.max - xAxis.min,
+                centerX = pick(centerXArg, xAxis.min + xRange / 2),
+                newXRange = xRange * howMuch,
+                yAxis = chart.yAxis[0],
+                yRange = yAxis.max - yAxis.min,
+                centerY = pick(centerYArg, yAxis.min + yRange / 2),
+                newYRange = yRange * howMuch,
+                fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5,
+                fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
+                newXMin = centerX - newXRange * fixToX,
+                newYMin = centerY - newYRange * fixToY,
+                newExt = chart.fitToBox({
+                    x: newXMin,
+                    y: newYMin,
+                    width: newXRange,
+                    height: newYRange
+                }, {
+                    x: xAxis.dataMin,
+                    y: yAxis.dataMin,
+                    width: xAxis.dataMax - xAxis.dataMin,
+                    height: yAxis.dataMax - yAxis.dataMin
+                });
+
+            // When mousewheel zooming, fix the point under the mouse
+            if (mouseX) {
+                xAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+            }
+            if (mouseY) {
+                yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+            }
+
+            // Zoom
+            if (howMuch !== undefined) {
+                //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                //xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
+                if (newExt.x == xAxis.dataMin) {
+                    // add bubble padding
+                    xAxis.userMin = UNDEFINED;
+                    xAxis.userMax = UNDEFINED;
+                } else {
+                    // set min and max
+                    xAxis.userMin = newExt.x;
+                    xAxis.userMax = newExt.x + newExt.width;
+                }
+                //yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
+                if (newExt.y == yAxis.dataMin) {
+                    // add bubble padding
+                    yAxis.userMin = UNDEFINED;
+                    yAxis.userMax = UNDEFINED;
+                } else {
+                    // set min and max
+                    yAxis.userMin = newExt.y;
+                    yAxis.userMax = newExt.y + newExt.height;
+                }
+                //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                // Reset zoom
+            } else {
+                xAxis.setExtremes(undefined, undefined, false);
+                yAxis.setExtremes(undefined, undefined, false);
+            }
+            chart.redraw();
+        });
+    }(Highcharts));
 });
 
 function processElectionData(e) {
@@ -128,7 +206,7 @@ function processElectionData(e) {
             startOnTick: false,
             endOnTick: false,
             title: {
-                text: 'No. of spiking topics'
+                text: 'Spiking topics'
             },
             //maxPadding: 0.2
         },
@@ -137,8 +215,7 @@ function processElectionData(e) {
             useHTML: true,
             headerFormat: '<div>',
             pointFormat: '{point.tooltip}',
-            footerFormat: '</div>',
-            followPointer: false
+            footerFormat: '</div>'
         },
 
         plotOptions: {
