@@ -10,12 +10,25 @@
         <script src="jquery.csv.js"></script>
     </head>
     <body>
-        <div class="container">
+    <div class="row">
+        <div class="col s2">
+            <div class="card-panel blue-grey">
+                <span class="white-text">Select an event by clicking on a bubble to see a list of Wikipedia topics that have
+                    spiked before, during or after the selected election event.<br> The sparklines are divieded into 5 buckets of 24
+                    hours as follows:
+              </span>
+            </div>
+            <div class="card-image">
+              <img src="spike.png" style="width: 100%;">
+            </div>
+        </div>
+        <div class="col s9">
             <div id="bubble_chart"></div>
             <table class="bordered">
                 <tbody id="spark_lines"></tbody>
             </table>
         </div>
+    </div>
         <script src="election.js"></script>
     </body>
 </html>

@@ -6,7 +6,7 @@ $(document).ready(function() {
     spinner = new Spinner().spin(target);
     $.ajax({
         type: "GET",
-        url: "spikes-300.json",
+        url: "spikes-300-3.json",
         dataType: "json",
         success: function(data) {processSpikes(data);}
      });
@@ -117,17 +117,16 @@ function processElectionData(e) {
     var mixedElectionEvents = [];
     uniqueEvents = {}
     csv.forEach(function (obj) {
-        var date = Date.parse(obj.Date);
+        var date = new Date(Date.parse(obj.Date));
+        date.setHours(7);
+        date = date.getTime();
         var newTooltip = obj.Party + ' ' + obj.Type + ' in ' + obj.Location + '<br>';
         if (date in uniqueEvents) {
             var evt = uniqueEvents[date];
         }
         else {
-            var spikeDate = new Date(date);
-            spikeDate.setHours(7); // CST time zone
-            var target = spikeDate.getTime();
-            var start = bisectLeft(target);
-            var end = bisectRight(target);
+            var start = bisectLeft(date);
+            var end = bisectRight(date);
             var views = 0;
             for (var i = start; i < end; i++) {
                views += spikes[i].total_views;
@@ -264,7 +263,7 @@ function processSpikes(spikesArray) {
                     color: 'rgba(255, 84, 84, 0.5)',
                     value: views.length,
                     width: 1,
-                    dashStyle: 'Dash'
+                    dashStyle: 'Dash',
                 });
             }
             views = views.concat(spike[days[j]]);
@@ -316,12 +315,8 @@ function bisectRight(target) {
 }
 
 function plotSparklines(timeStamp) {
-    var date = new Date(timeStamp);
-    date.setHours(7); // CST time zone
-    var target = date.getTime();
-
-    var start = bisectLeft(target);
-    var end = bisectRight(target);
+    var start = bisectLeft(timeStamp);
+    var end = bisectRight(timeStamp);
     end = end - start > 50 ? start + 50 : end;
 
     $("#spark_lines tr").remove();

@@ -86,8 +86,8 @@ public class PeakSignalExtractor implements Serializable {
                     json.put("event_timestamp", timeStamp);
 
                     // two days before
-                    int[] starts = {-60, -36, -12, 12, 36};
-                    int[] ends = {-36, -12, 12, 36, 60};
+                    int[] starts = {-48, -24,  0, 24, 48};
+                    int[] ends =   {-24,   0, 24, 48, 72};
                     String[] keys = {"two_days_before", "one_day_before", "on_the_day", "one_day_after", "two_days_after"};
 
                     for (int i = 0; i < starts.length; i++) {
