@@ -370,18 +370,20 @@ function bisectRight(target) {
 function plotSparklines(timeStamp) {
     var start = bisectLeft(timeStamp);
     var end = bisectRight(timeStamp);
-    end = end - start > 50 ? start + 50 : end;
+    end = end - start > 300 ? start + 50 : end;
 
     $("#spark_lines tr").remove();
 
     var localSpikes = spikes.slice(start, end);
+    var count = 0;
     localSpikes.forEach(function (spike) {
         var row = $('<tr></tr>');
         row.append('<td>' + spike.topic + '</td>');
-        var sparkLine = $('<td></td>');
+        var sparkLine = $('<td id="spark' + count + '"></td>');
         row.append(sparkLine);
         $('#spark_lines').append(row);
         plotSparkline(sparkLine, spike);
+        count += 1;
     });
 }
 
@@ -455,7 +457,7 @@ function plotSparkline(el, data) {
         credits: {enabled: false},
         exporting: {
             enabled: false,
-            type: 'image/svg+xml'
+            type: 'application/pdf'
         },
         title: {
             text: ''
