@@ -90,13 +90,11 @@ public final class TrendDetector implements Serializable {
         );
 
         namedLinesRDD
-//                .filter(new FilterTopics(keyWords))
                 .mapToPair(new TopicToTimeseries())
                 .reduceByKey(new ReduceByTopic())
 //                .mapValues(new ComputeEta(properties))
                 .mapValues(new ComputeSignal(properties))
                 .saveAsTextFile(outputFilePattern, org.apache.hadoop.io.compress.GzipCodec.class);
-//                .saveAsObjectFile(outputFilePattern);
         sc.stop();
     }
 
